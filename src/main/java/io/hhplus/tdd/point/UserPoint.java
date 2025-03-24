@@ -37,7 +37,7 @@ public record UserPoint(
                 }
             }
             case USE -> {
-                if (point - requestAmt <= MAX_POINT) {
+                if (point - requestAmt < 0) {
                     throw new IllegalArgumentException(MESSAGE_INSUFFICIENT_BALANCE);
                 }
             }
