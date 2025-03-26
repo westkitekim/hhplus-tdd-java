@@ -68,7 +68,7 @@ public class PointService {
         long deductedPoint = currPoint.point() - useAmt;
         UserPoint updatedPoint = userPointTable.insertOrUpdate(userId, deductedPoint);
 
-        pointHistoryTable.insert(userId, useAmt, TransactionType.CHARGE, System.currentTimeMillis());
+        pointHistoryTable.insert(userId, useAmt, TransactionType.USE, System.currentTimeMillis());
 
         return updatedPoint;
     }
