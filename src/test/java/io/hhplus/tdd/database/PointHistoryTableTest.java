@@ -46,7 +46,7 @@ class PointHistoryTableTest {
         pointHistoryTable.insert(userId, amount, type, updateMillis);
 
         long userId2 = 1L;
-        long amount2 = 100L;
+        long amount2 = 1001L;
         TransactionType type2 = USE;
         long updateMillis2 = System.currentTimeMillis();
         pointHistoryTable.insert(userId2, amount2, type2, updateMillis2);
@@ -64,5 +64,18 @@ class PointHistoryTableTest {
         assertThat(amount2).isEqualTo(result.get(1).amount());
         assertThat(type2).isEqualTo(result.get(1).type());
         assertThat(updateMillis2).isEqualTo(result.get(1).updateMillis());
+    }
+
+    @Test
+    @DisplayName("이력에 없는 사용자 Id로 조회시 빈 리스트를 반환한다.")
+    void getEmptyListHistoriesByNoUser() {
+        // given
+        long noUserId = 1L;
+
+        // when
+        List<PointHistory> histories = pointHistoryTable.selectAllByUserId(noUserId);
+
+        // then
+        assertTrue(histories.isEmpty());
     }
 }
