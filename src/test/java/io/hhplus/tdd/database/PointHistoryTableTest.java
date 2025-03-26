@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.hhplus.tdd.point.TransactionType.*;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("PointHistoryTable 테스트")
 class PointHistoryTableTest {
