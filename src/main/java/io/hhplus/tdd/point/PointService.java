@@ -45,9 +45,7 @@ public class PointService {
      */
     public UserPoint charge(long userId, long chargeAmt) {
 
-        final AtomicReference<UserPoint> result = new AtomicReference<>();
-
-        userLockManager.executeLock(userId, () -> {
+        return userLockManager.executeLock(userId, () -> {
             UserPoint currPoint = userPointTable.selectById(userId);
             currPoint.validate(TransactionType.CHARGE, chargeAmt);
 
@@ -56,9 +54,8 @@ public class PointService {
 
             pointHistoryTable.insert(userId, chargeAmt, TransactionType.CHARGE, System.currentTimeMillis());
 
-            result.set(updatedPoint);
+            return updatedPoint;
         });
-        return result.get();
     }
 
     /**
@@ -69,9 +66,7 @@ public class PointService {
      */
     public UserPoint use(long userId, long useAmt) {
 
-        final AtomicReference<UserPoint> result = new AtomicReference<>();
-
-        userLockManager.executeLock(userId, () -> {
+        return userLockManager.executeLock(userId, () -> {
             UserPoint currPoint = userPointTable.selectById(userId);
             currPoint.validate(TransactionType.USE, useAmt);
 
@@ -80,9 +75,7 @@ public class PointService {
 
             pointHistoryTable.insert(userId, useAmt, TransactionType.USE, System.currentTimeMillis());
 
-            result.set(updatedPoint);
+            return updatedPoint;
         });
-
-        return result.get();
     }
 }
