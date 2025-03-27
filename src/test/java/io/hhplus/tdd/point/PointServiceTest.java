@@ -18,12 +18,14 @@ class PointServiceTest {
     UserPointTable userPointTable;
     PointHistoryTable pointHistoryTable;
     PointService pointService;
+    UserLockManager userLockManager;
 
     @BeforeEach
     void setUp() {
         userPointTable = mock(UserPointTable.class);
         pointHistoryTable = mock(PointHistoryTable.class);
-        pointService = new PointService(userPointTable, pointHistoryTable);
+        userLockManager = mock(UserLockManager.class);
+        pointService = new PointService(userPointTable, pointHistoryTable, userLockManager);
     }
 
     @Nested
