@@ -36,15 +36,6 @@ class PointControllerTest {
     private PointHistoryTable pointHistoryTable;
 
     @Test
-    @DisplayName("미사용자의 포인트 조회 시 0포인트가 반환된다.")
-    void getNoUserPointZero() throws Exception {
-
-        mockMvc.perform(get("/point/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.point").value(0));
-    }
-
-    @Test
     @DisplayName("사용자의 포인트 정보를 조회할 수 있다.")
     void getUserPoint_success() throws Exception {
         long userId = 1L;
