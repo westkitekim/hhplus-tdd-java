@@ -24,7 +24,7 @@ class PointServiceTest {
     void setUp() {
         userPointTable = mock(UserPointTable.class);
         pointHistoryTable = mock(PointHistoryTable.class);
-        userLockManager = mock(UserLockManager.class);
+        userLockManager = new UserLockManager();
         pointService = new PointService(userPointTable, pointHistoryTable, userLockManager);
     }
 
