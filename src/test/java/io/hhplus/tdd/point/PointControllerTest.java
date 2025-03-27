@@ -75,7 +75,7 @@ class PointControllerTest {
     }
 
     @Test
-    @DisplayName("사용자의 포인트를 사용할 수 있다.")
+    @DisplayName("포인트 사용 성공시 누적된 포인트에서 사용 포인트가 차감된다.")
     void use_success() throws Exception {
         // given
         long userId = 1L;
