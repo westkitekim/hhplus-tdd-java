@@ -41,7 +41,7 @@ public class PointController {
     @PatchMapping("{id}/charge")
     public ResponseEntity<UserPoint> charge(
             @PathVariable long id,
-            @RequestParam long amount
+            @RequestBody long amount
     ) {
         return ResponseEntity.ok(pointService.charge(id, amount));
     }
@@ -52,7 +52,7 @@ public class PointController {
     @PatchMapping("{id}/use")
     public ResponseEntity<UserPoint> use(
             @PathVariable long id,
-            @RequestParam long amount
+            @RequestBody long amount
     ) {
         return ResponseEntity.ok(pointService.use(id, amount));
     }
