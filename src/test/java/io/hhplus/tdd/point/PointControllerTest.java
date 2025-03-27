@@ -59,7 +59,7 @@ class PointControllerTest {
     }
 
     @Test
-    @DisplayName("사용자의 포인트를 충전할 수 있다.")
+    @DisplayName("포인트 충전 성공시 누적된 포인트를 반환한다.")
     void charge_success() throws Exception {
         long userId = 1L;
         long amount = 3000L;
