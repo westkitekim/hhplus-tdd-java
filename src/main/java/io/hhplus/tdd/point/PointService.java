@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 총 4가지 기본 기능 (포인트 조회, 포인트 충전, 포인트 사용 내역 조회, 포인트 사용)
@@ -16,6 +17,7 @@ public class PointService {
 
     private final UserPointTable userPointTable;
     private final PointHistoryTable pointHistoryTable;
+    private final UserLockManager userLockManager;
 
     /**
      * 사용자 포인트 정보 조회
@@ -42,16 +44,21 @@ public class PointService {
      * @return
      */
     public UserPoint charge(long userId, long chargeAmt) {
-        UserPoint currPoint = userPointTable.selectById(userId);
 
-        currPoint.validate(TransactionType.CHARGE, chargeAmt);
+        final AtomicReference<UserPoint> result = new AtomicReference<>();
 
-        long addedPoint = currPoint.point() + chargeAmt;
-        UserPoint updatedPoint = userPointTable.insertOrUpdate(userId, addedPoint);
+        userLockManager.executeLock(userId, () -> {
+            UserPoint currPoint = userPointTable.selectById(userId);
+            currPoint.validate(TransactionType.CHARGE, chargeAmt);
 
-        pointHistoryTable.insert(userId, chargeAmt, TransactionType.CHARGE, System.currentTimeMillis());
+            long addedPoint = currPoint.point() + chargeAmt;
+            UserPoint updatedPoint = userPointTable.insertOrUpdate(userId, addedPoint);
 
-        return updatedPoint;
+            pointHistoryTable.insert(userId, chargeAmt, TransactionType.CHARGE, System.currentTimeMillis());
+
+            result.set(updatedPoint);
+        });
+        return result.get();
     }
 
     /**
@@ -61,15 +68,21 @@ public class PointService {
      * @return
      */
     public UserPoint use(long userId, long useAmt) {
-        UserPoint currPoint = userPointTable.selectById(userId);
 
-        currPoint.validate(TransactionType.USE, useAmt);
+        final AtomicReference<UserPoint> result = new AtomicReference<>();
 
-        long deductedPoint = currPoint.point() - useAmt;
-        UserPoint updatedPoint = userPointTable.insertOrUpdate(userId, deductedPoint);
+        userLockManager.executeLock(userId, () -> {
+            UserPoint currPoint = userPointTable.selectById(userId);
+            currPoint.validate(TransactionType.USE, useAmt);
 
-        pointHistoryTable.insert(userId, useAmt, TransactionType.USE, System.currentTimeMillis());
+            long deductedPoint = currPoint.point() - useAmt;
+            UserPoint updatedPoint = userPointTable.insertOrUpdate(userId, deductedPoint);
 
-        return updatedPoint;
+            pointHistoryTable.insert(userId, useAmt, TransactionType.USE, System.currentTimeMillis());
+
+            result.set(updatedPoint);
+        });
+
+        return result.get();
     }
 }
