@@ -132,4 +132,37 @@ class PointServiceIntgrTest {
             assertThat(pointService.getPointHistoryByUserId(userId)).hasSize(21);
         }
     }
+
+    @Test
+    @DisplayName("서로 다른 사용자의 요청은 동시에 처리된다")
+    void diffUsers_ProcessedConcurrently() throws InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        CountDownLatch latch = new CountDownLatch(2);
+
+        long userId1 = 5L;
+        long userId2 = 10L;
+
+        long[] timestamps = new long[2];
+
+        executor.submit(() -> {
+            pointService.charge(userId1, 5000L);
+            timestamps[0] = System.currentTimeMillis();
+            latch.countDown();
+        });
+
+        executor.submit(() -> {
+            pointService.charge(userId2, 5000L);
+            timestamps[1] = System.currentTimeMillis();
+            latch.countDown();
+        });
+
+        latch.await();
+
+        long diff = Math.abs(timestamps[0] - timestamps[1]);
+        System.out.println("처리 시간차: " + diff + "ms");
+
+        // 500ms 이내에 처리되었으면 거의 동시에 처리된 것으로 간주
+        assertThat(diff).isLessThan(500);
+    }
+
 }
