@@ -28,6 +28,23 @@ class PointServiceTest {
 
     @Nested
     class SelectPointTest {
+
+        @Test
+        @DisplayName("등록되지 않은 사용자 조회시 초기값을 반환한다.")
+        void getNoUserPoint_returnsZero() {
+            // given
+            long noUserId = 999L;
+            when(userPointTable.selectById(noUserId))
+                    .thenReturn(UserPoint.empty(noUserId));  // or just let it return null if not mocked
+
+            // when
+            UserPoint result = pointService.getUserPoint(noUserId);
+
+            // then
+            assertThat(result.id()).isEqualTo(noUserId);
+            assertThat(result.point()).isEqualTo(0L);
+        }
+
         @Test
         @DisplayName("사용자의 현재 포인트를 조회할 수 있다.")
         void getPointByUserId() {
